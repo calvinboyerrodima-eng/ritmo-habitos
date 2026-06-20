@@ -7,7 +7,8 @@
  *   - O ir a Settings y pegarlo ahí (queda en localStorage)
  */
 export const DEFAULT_GOOGLE_CLIENT_ID =
-  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ??
+  "203746333268-sq3gtkdqk5dbqdeq55tfql96vq8g1b5b.apps.googleusercontent.com";
 
 export const CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.events";
 
