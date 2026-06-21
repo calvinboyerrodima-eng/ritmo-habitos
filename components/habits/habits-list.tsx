@@ -2,14 +2,15 @@
 import * as React from "react";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Plus, Search } from "lucide-react";
+import { Check, Plus, Search } from "lucide-react";
+import confetti from "canvas-confetti";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/db";
-import { DAY_LABELS_ES_SHORT, WEEK_DAYS_MON_FIRST } from "@/lib/dates";
-import type { Habit } from "@/lib/types";
+import { DAY_LABELS_ES_SHORT, WEEK_DAYS_MON_FIRST, ymd } from "@/lib/dates";
+import type { DayOfWeek, Habit } from "@/lib/types";
 
 export function HabitsList() {
   const [q, setQ] = React.useState("");
@@ -99,6 +100,34 @@ export function HabitsList() {
 
 function HabitRow({ habit }: { habit: Habit }) {
   const days = WEEK_DAYS_MON_FIRST.filter((d) => habit.schedule[d].startTime);
+  const today = ymd(new Date());
+  const todayDow = new Date().getDay() as DayOfWeek;
+  const scheduledToday = !!habit.schedule[todayDow].startTime;
+
+  const todayComp = useLiveQuery(
+    () => db.completions.get(`${habit.id}_${today}`),
+    [habit.id, today],
+  );
+  const doneToday = todayComp?.status === "done";
+
+  async function markTodayDone(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    await db.completions.put({
+      id: `${habit.id}_${today}`,
+      habitId: habit.id,
+      date: today,
+      status: "done",
+      completedAt: new Date().toISOString(),
+    });
+    confetti({
+      particleCount: 60,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: [habit.color, "#22C55E", "#F59E0B"],
+    });
+  }
+
   return (
     <Link href={`/habits/${habit.id}`}>
       <Card className="flex items-center gap-3 p-3 transition hover:bg-accent">
@@ -121,6 +150,24 @@ function HabitRow({ habit }: { habit: Habit }) {
               : days.map((d) => DAY_LABELS_ES_SHORT[d]).join(" · ")}
           </p>
         </div>
+        {scheduledToday && (
+          doneToday ? (
+            <Badge variant="success" className="gap-1 text-[10px]">
+              <Check className="h-3 w-3" /> Hoy
+            </Badge>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={markTodayDone}
+              className="shrink-0"
+              title="Marcar hoy como hecho"
+            >
+              <Check className="h-4 w-4" />
+              Hoy
+            </Button>
+          )
+        )}
       </Card>
     </Link>
   );

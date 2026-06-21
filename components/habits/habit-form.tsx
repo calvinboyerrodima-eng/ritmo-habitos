@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { EmojiColorPicker } from "./emoji-color-picker";
 import { EMPTY_SCHEDULE, WeeklyScheduleGrid } from "./weekly-schedule-grid";
+import { RecurrencePresets } from "./recurrence-presets";
 import { db } from "@/lib/db";
 import { uuid } from "@/lib/utils";
 import { syncHabitEvents, deleteHabitEvents } from "@/lib/calendar-sync";
@@ -189,10 +190,12 @@ export function HabitForm({ initial }: Props) {
 
       <Card>
         <CardContent className="grid gap-3 p-4">
-          <Label>Horario semanal</Label>
+          <Label>Repetición</Label>
           <p className="text-xs text-muted-foreground">
-            Una hora puntual y duración por día. Dejá vacíos los días que no aplica.
+            Elegí un preset o personalizá día por día abajo. Los hábitos se
+            re-agendan automáticamente cada 30 días.
           </p>
+          <RecurrencePresets schedule={schedule} onApply={setSchedule} />
           <WeeklyScheduleGrid value={schedule} onChange={setSchedule} />
         </CardContent>
       </Card>

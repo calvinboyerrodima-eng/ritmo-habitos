@@ -144,12 +144,12 @@ export function TodayList() {
                   </div>
                 </div>
                 {!isDone && !isSkipped && (
-                  <div className="flex gap-1">
+                  <div className="flex items-center gap-1">
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => postpone(event)}
-                      title="Posponer 1 h"
+                      title="Posponer 1 hora"
                     >
                       <ChevronsRight className="h-4 w-4" />
                     </Button>
@@ -157,18 +157,24 @@ export function TodayList() {
                       size="icon"
                       variant="ghost"
                       onClick={() => markSkipped(habit, event)}
-                      title="Saltar"
+                      title="Saltar por hoy"
                     >
                       <SkipForward className="h-4 w-4" />
                     </Button>
                     <Button
-                      size="icon"
+                      size="sm"
                       onClick={() => markDone(habit, event)}
-                      title="Hecho"
+                      title="Marcar como hecho"
                     >
                       <Check className="h-4 w-4" />
+                      Hecho
                     </Button>
                   </div>
+                )}
+                {isDone && (
+                  <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium uppercase text-emerald-600 dark:text-emerald-400">
+                    Hecho
+                  </span>
                 )}
               </Card>
             </motion.div>
